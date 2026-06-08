@@ -1,0 +1,15 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - heading "MuxPay Splitter" [level=1] [ref=e6]
+        - paragraph [ref=e7]: Atomic batch payout · up to 10 recipients · one Freighter signature
+      - button "Connect Freighter" [ref=e9]
+    - generic [ref=e10]:
+      - paragraph [ref=e11]: Connect your Freighter wallet to get started.
+      - paragraph [ref=e12]:
+        - text: No wallet?
+        - link "Install Freighter" [ref=e13] [cursor=pointer]:
+          - /url: https://freighter.app
+        - text: and switch to Testnet.
+    - generic [ref=e14]: MuxPay Splitter · StellarX PH workshop @ PUP QC · Track 2 Financial Inclusion

@@ -1,0 +1,18 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - heading "VoucherRail PH" [level=1] [ref=e6]
+          - paragraph [ref=e7]: Time-limited claimable vouchers on Stellar testnet
+        - button "Connect Freighter" [ref=e9]
+      - generic [ref=e10]:
+        - paragraph [ref=e11]: Connect your wallet to create vouchers.
+        - paragraph [ref=e12]:
+          - text: No wallet?
+          - link "Install Freighter" [ref=e13] [cursor=pointer]:
+            - /url: https://freighter.app
+          - text: and switch to Test Net.
+      - generic [ref=e14]: VoucherRail PH · StellarX Workshop @ PUP QC · testnet only
+  - button "Open Next.js Dev Tools" [ref=e20] [cursor=pointer]:
+    - img [ref=e21]

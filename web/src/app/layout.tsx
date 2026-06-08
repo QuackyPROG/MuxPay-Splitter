@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StellarX Starter — PUP Workshop",
-  description: "Wallet, payments, and a Soroban contract on Stellar testnet.",
+  title: "MuxPay Splitter — Atomic Batch Payout on Stellar",
+  description:
+    "Sign once with Freighter to pay up to 10 recipients atomically on Stellar testnet — supporting XLM direct payments, USDC via DEX path, and muxed accounts.",
 };
 
 export default function RootLayout({

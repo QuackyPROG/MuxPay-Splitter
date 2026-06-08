@@ -1,5 +1,6 @@
 import { TransactionBuilder, Operation, Asset, BASE_FEE } from '@stellar/stellar-sdk';
-import { server, NETWORK_PASSPHRASE, USDC_ISSUER } from './stellar';
+import { server, horizon, NETWORK_PASSPHRASE, USDC_ISSUER } from './stellar';
+import { getBaseFromMuxed } from './muxed';
 
 /**
  * Build an unsigned changeTrust transaction that lets the account hold USDC.
@@ -20,4 +21,20 @@ export async function buildAddUsdcTrustlineXDR(account: string): Promise<string>
     .build();
 
   return tx.toXDR();
+}
+
+/** Check if an address (G... or M...) has a USDC trustline. */
+export async function hasTrustline(address: string): Promise<boolean> {
+  const base = getBaseFromMuxed(address);
+  try {
+    const acct = await horizon.loadAccount(base);
+    return acct.balances.some(
+      (b) =>
+        b.asset_type !== 'native' &&
+        (b as any).asset_code === 'USDC' &&
+        (b as any).asset_issuer === USDC_ISSUER,
+    );
+  } catch {
+    return false;
+  }
 }
