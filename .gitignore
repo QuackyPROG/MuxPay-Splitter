@@ -19,3 +19,15 @@ Thumbs.db
 .idea
 .vscode/*
 !.vscode/extensions.json
+
+# AI / agent local scaffolding
+CLAUDE.md
+.claude/
+.specify/
+.agents/
+.cursor/
+.windsurf/
+.roo/
+.continue/
+.aider/
+specs/
