@@ -4,10 +4,11 @@ import type { Recipient, AssetCode } from '@/lib/types';
 import { isValidAddress, buildMuxedAddress } from '@/lib/muxed';
 import { parseCSV } from '@/lib/batch';
 
+// Demo accounts: XLM recipients funded via Friendbot; Ana Reyes has USDC trustline added via Stellar Lab
 const DEMO_CSV = `# name, address, amount, asset[, memberId]
 Maria Cruz,GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN,5.00,XLM
 Juan Dela Cruz,GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN,3.00,XLM,12345
-Ana Reyes,GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5,10.00,USDC`;
+Ana Reyes,GAQLQT5QB6QQHQ4TIC3J7OY2GALI4XWCNXBFA6YFB2I3WIQFNEAJHJ2J,1.00,USDC`;
 
 interface Row {
   id: string;

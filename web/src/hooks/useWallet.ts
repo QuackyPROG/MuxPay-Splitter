@@ -1,7 +1,7 @@
 'use client';
 import { useState, useCallback } from 'react';
 
-const TIMEOUT_MS = 3000;
+const TIMEOUT_MS = 5000;
 
 // Freighter API calls can hang if the extension is missing — race them with a timeout.
 function withTimeout<T>(p: Promise<T>, fallback: T, ms = TIMEOUT_MS): Promise<T> {

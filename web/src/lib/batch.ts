@@ -88,6 +88,10 @@ export async function submitBatchTx(
   const tx = TransactionBuilder.fromXDR(signedXdr, NETWORK_PASSPHRASE);
   try {
     const res = await horizon.submitTransaction(tx as any);
+    if (!res.successful) {
+      const codes = (res as any).extras?.result_codes;
+      throw new Error(codes ? JSON.stringify(codes) : 'Batch transaction failed');
+    }
     return { hash: res.hash, ledger: res.ledger };
   } catch (e: any) {
     const codes = e.response?.data?.extras?.result_codes;

@@ -5,8 +5,7 @@ import {
   BASE_FEE,
 } from '@stellar/stellar-sdk';
 import { server, NETWORK_PASSPHRASE, USDC_ISSUER } from './stellar';
-
-export type AssetCode = 'XLM' | 'USDC';
+import type { AssetCode } from './types';
 
 /** Build an unsigned classic payment transaction and return its XDR. */
 export async function buildPaymentXDR(

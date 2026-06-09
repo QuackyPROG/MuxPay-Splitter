@@ -81,14 +81,19 @@ export default function Home() {
       setTxStatus('signing');
       // Dynamic import only — static import breaks SSR
       const freighter = await import('@stellar/freighter-api');
-      const signed = await freighter.signTransaction(xdr, {
-        networkPassphrase: NETWORK_PASSPHRASE,
-        address: publicKey,
-      });
+      const SIGN_TIMEOUT = 5000;
+      const signed = await Promise.race([
+        freighter.signTransaction(xdr, {
+          networkPassphrase: NETWORK_PASSPHRASE,
+          address: publicKey,
+        }),
+        new Promise<{ signedTxXdr: ''; signerAddress: ''; error: string }>(r =>
+          setTimeout(() => r({ signedTxXdr: '', signerAddress: '',
+            error: 'Freighter timed out — is the extension unlocked?' }), SIGN_TIMEOUT)
+        ),
+      ]);
       if (signed.error) {
-        throw new Error(
-          typeof signed.error === 'string' ? signed.error : 'Signing rejected',
-        );
+        throw new Error(typeof signed.error === 'string' ? signed.error : 'Signing rejected');
       }
 
       setTxStatus('submitting');

@@ -4,8 +4,8 @@ import {
   buildPaymentXDR,
   submitSignedXDR,
   pollTransaction,
-  type AssetCode,
 } from '@/lib/payment';
+import type { AssetCode } from '@/lib/types';
 import { NETWORK_PASSPHRASE } from '@/lib/stellar';
 
 type Status =
