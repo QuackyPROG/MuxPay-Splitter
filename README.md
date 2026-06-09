@@ -45,7 +45,7 @@ Prerequisites:
 1. Clone the repo
 
 ```bash
-git clone https://github.com/<your-org>/mux-pay.git
+git clone https://github.com/QuackyPROG/MuxPay-Splitter.git
 cd mux-pay
 ```
 
