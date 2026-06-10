@@ -1,4 +1,4 @@
-import { TransactionBuilder, Operation } from '@stellar/stellar-sdk';
+import { TransactionBuilder, Operation, Claimant } from '@stellar/stellar-sdk';
 import { horizon, NETWORK_PASSPHRASE, XLM, USDC } from './stellar';
 import type { Recipient, AssetCode } from './types';
 
@@ -103,4 +103,24 @@ export async function submitBatchTx(
 
 export function estimateFeeXLM(opCount: number): string {
   return ((100 * (1 + opCount)) / 10_000_000).toFixed(7);
+}
+
+/**
+ * Build a CreateClaimableBalance op for async payroll delivery.
+ * Claimants: employee (unconditional) + employer (reclaim after 7 days).
+ */
+export function buildClaimableBalanceOp(
+  employeeAddress: string,
+  employerAddress: string,
+  asset: ReturnType<typeof XLM.constructor.prototype.toXDRObject> | typeof XLM | typeof USDC | import('@stellar/stellar-sdk').Asset,
+  amount: string,
+) {
+  return Operation.createClaimableBalance({
+    asset: asset as import('@stellar/stellar-sdk').Asset,
+    amount,
+    claimants: [
+      new Claimant(employeeAddress, Claimant.predicateUnconditional()),
+      new Claimant(employerAddress, Claimant.predicateNot(Claimant.predicateBeforeRelativeTime('604800'))),
+    ],
+  });
 }

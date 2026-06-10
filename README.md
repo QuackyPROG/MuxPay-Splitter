@@ -1,100 +1,115 @@
-# MuxPay Splitter
+# MuxPay — Noncustodial Payroll on Stellar
 
-A Stellar-powered payment splitter that automates splitting a single incoming
-payment across multiple recipients (merchant, vendor, platform fee) with
-transparent, on-chain settlement.
+A three-surface payroll dApp: GSAP scroll landing, employer dashboard (roster +
+one-signature run wizard), and an employee claim portal. Async distribution via
+Stellar **claimable balances** — a run is never blocked by unready employees.
 
 ## One-line description
-Split single payments to multiple recipients on Stellar (Testnet/Mainnet).
 
-## Problem
-Small merchants, marketplaces, and informal seller groups often need to split
-payments and share fees with minimal friction. Manual reconciliation is error-
-prone and slow. MuxPay automates splitting so funds are distributed reliably
-and quickly.
+Run noncustodial team payroll on Stellar: mixed XLM/USDC delivery, async
+claimable-balance fallback, one Freighter signature per run.
 
-## How It Works
-- The payer initiates a payment from the web UI and connects a Freighter wallet.
-- The frontend either calls a Soroban contract that performs the split, or
-  constructs a set of atomic operations that distribute funds to recipients.
-- Transactions are simulated, signed by the payer, submitted to Soroban RPC/
-  Horizon, and polled until finality.
+## Surfaces
+
+| Route | Who | What |
+|---|---|---|
+| `/` | Anyone | GSAP scroll landing — product story + CTA |
+| `/dashboard` | Employer | Manage roster, view history, connect wallet |
+| `/dashboard/run` | Employer | 4-step run wizard: select → preflight → sign → result |
+| `/claim` | Employee | See and claim pending balances — mobile-priority |
 
 ## How It Uses Stellar
-- Payments: uses Stellar payments and transactions for value transfer.
-- Soroban: optional on-chain splitting logic and state (examples in
-  `contracts/`).
-- Wallet integration: Freighter for signing; best-practice simulation + polling
-  of transaction status before accepting success.
+
+1. **Payments** — `Operation.payment` for direct XLM delivery to funded accounts
+2. **Path payments** — `Operation.pathPaymentStrictReceive` (XLM → USDC via DEX)
+3. **Muxed accounts** — `encodeMuxedAccount` for per-employee off-chain IDs
+4. **Claimable balances** — `Operation.createClaimableBalance` for async delivery
+   (account-not-funded or no trustline); employee claims with `ClaimClaimableBalance`
+5. **One Freighter signature** — all ops in a single classic multi-op transaction
+
+The employer can reclaim unclaimed balances after 7 days via the employer-side
+`predicateNot(predicateBeforeRelativeTime("604800"))` predicate.
 
 ## Track
+
 Track 2 — Financial Inclusion & Everyday Payments
 
 ## Tech Stack
-- Frontend: Next.js (TypeScript) in `web/`
-- UI: Tailwind CSS
-- Stellar libraries: `@stellar/stellar-sdk` (v15+), `@stellar/freighter-api` (v6+)
-- Contracts: Rust + `soroban-sdk` (contracts in `contracts/`)
 
-## Setup & Run
-Prerequisites:
-- Node 18+ and npm
-- Rust and Cargo (only if building/deploying contracts)
-- Freighter browser extension for signing
+- Next.js 16 (App Router) + React 19 + TypeScript 5
+- Tailwind CSS v4 · next-themes (dark/light) · GSAP + @gsap/react (landing)
+- `@stellar/stellar-sdk` v15 · `@stellar/freighter-api` v6
+- localStorage per wallet (no backend, fully noncustodial)
+- Lucide icons · Space Grotesk + Inter fonts
 
-1. Clone the repo
+## Quick Start (judges — under 2 minutes)
 
 ```bash
 git clone https://github.com/QuackyPROG/MuxPay-Splitter.git
-cd mux-pay
-```
-
-2. Run the frontend
-
-```bash
-cd web
+cd mux-pay/web
 npm install
-# Set environment variables in a .env.local or your shell:
-# NEXT_PUBLIC_SOROBAN_RPC=https://soroban-testnet.stellar.org
-# NEXT_PUBLIC_HORIZON_URL=https://horizon-testnet.stellar.org
-# NEXT_PUBLIC_NETWORK=TESTNET
 npm run dev
+# → open http://localhost:3000
 ```
 
-Open http://localhost:3000 and connect a Freighter wallet configured for Testnet.
+No `.env` required — all defaults point to Stellar testnet public endpoints.
 
-3. Build & deploy contracts (optional)
+**Freighter setup**: install the [Freighter extension](https://freighter.app),
+switch to **Testnet**, and fund with
+[Friendbot](https://friendbot.stellar.org?addr=YOUR_ADDRESS).
 
-```bash
-cd contracts/savings-goal
-cargo test
-cargo build --target wasm32-unknown-unknown --release
-# Use the Stellar CLI or your preferred tool to deploy the generated WASM to testnet
-# stellar contract deploy --wasm target/wasm32-unknown-unknown/release/<contract>.wasm --network testnet
-```
+## Demo Script (judges)
 
-Once deployed, add the contract ID to `web/.env.local` as `NEXT_PUBLIC_CONTRACT_ID`
-and restart the frontend.
+### Employer flow (~3 min)
+
+1. Open `/dashboard` and connect Freighter (Employer A address)
+2. Add 3 employees:
+   - Alice — funded XLM account → will get `payment`
+   - Bob — funded account with USDC trustline → will get `path-payment`
+   - Carol — unfunded address → will get `claimable-balance`
+   - *(or import via CSV: `name,address,salary,asset`)*
+3. Click **Run Payroll** → preflight auto-decides delivery method per employee
+4. Review the preview (see method badges + reserve math)
+5. Click **Sign & Submit** → one Freighter prompt → confirmed tx + Stellar Expert link
+6. Return to dashboard → run appears in history; CB items show "Pending"
+
+### Employee claim flow (~2 min)
+
+7. Fund Carol's account via Friendbot
+8. Open `/claim` and connect Freighter as Carol
+9. Pending claim appears within ~30 s of the run
+10. Click **Claim** → one Freighter prompt → USDC trustline auto-prepended if needed
+11. Back on `/dashboard` → click "↻ Refresh claim status" → Carol shows ✓ Claimed
+
+### Roster re-setup (2 min if needed between demos)
+
+- The roster is in localStorage keyed by wallet address
+- Use the CSV import to restore quickly:
+  ```
+  Alice,GABC...,10,XLM
+  Bob,GDEF...,5,USDC
+  Carol,GGHI...,8,XLM
+  ```
 
 ## Network Details
-- Network: testnet (recommended for judging); mainnet supported with configuration
-- Soroban RPC: https://soroban-testnet.stellar.org
-- Horizon: https://horizon-testnet.stellar.org
-- Network passphrase: `Test SDF Network ; September 2015`
 
-## Contract IDs / Asset Issuers
-- Contract IDs: (fill after deployment)
-- Asset issuers: (fill if using custom assets)
+- Network: **Stellar testnet**
+- Horizon: `https://horizon-testnet.stellar.org`
+- Soroban RPC: `https://soroban-testnet.stellar.org` (unused — classic ops only)
+- USDC issuer (testnet): `GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5`
+
+## Architecture Notes
+
+- No backend, no DB — localStorage per wallet, Horizon as money truth
+- GSAP imports are confined to the landing bundle (route-splitting)
+- All signing stays in Freighter; no private keys ever touch the app
+- 001 lib layer (`batch.ts`, `pathfinder.ts`, `trustline.ts`, `muxed.ts`,
+  `sign.ts`) extended in-place — not forked
 
 ## Team
-- [Full Name] — @[github-username]
-- [Full Name] — @[github-username]
+
+- QuackDev — @QuackyPROG
 
 ## License
-This project is available under the MIT License. See the `LICENSE` file.
 
-## Notes for Judges
-- This README follows the StellarX submission guidelines. The repo contains
-  a working frontend in `web/` and an example Soroban contract in
-  `contracts/savings-goal/` to demonstrate splitting logic.
-
+MIT

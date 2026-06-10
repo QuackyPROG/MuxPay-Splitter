@@ -1,26 +1,63 @@
 @import "tailwindcss";
 
+/* ── Semantic design tokens ─────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background:        #FAFAFC;
+  --surface:           #FFFFFF;
+  --surface-raised:    #F4F2FA;
+  --primary:           #6D28D9;
+  --primary-hover:     #5B21B6;
+  --on-primary:        #FFFFFF;
+  --on-surface:        #1C1726;
+  --on-surface-muted:  #5D5470;
+  --border:            #E5E1F0;
+  --accent:            #9333EA;
+  --success:           #15803D;
+  --danger:            #B91C1C;
+  --warning:           #92400E;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+  --background:        #0D0B14;
+  --surface:           #161221;
+  --surface-raised:    #1E1830;
+  --primary:           #A78BFA;
+  --primary-hover:     #C4B5FD;
+  --on-primary:        #1E1052;
+  --on-surface:        #EDEAF5;
+  --on-surface-muted:  #A39DB8;
+  --border:            #2C2440;
+  --accent:            #C084FC;
+  --success:           #4ADE80;
+  --danger:            #FCA5A5;
+  --warning:           #FCD34D;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background:       var(--background);
+  --color-surface:          var(--surface);
+  --color-surface-raised:   var(--surface-raised);
+  --color-primary:          var(--primary);
+  --color-primary-hover:    var(--primary-hover);
+  --color-on-primary:       var(--on-primary);
+  --color-on-surface:       var(--on-surface);
+  --color-on-surface-muted: var(--on-surface-muted);
+  --color-border:           var(--border);
+  --color-accent:           var(--accent);
+  --color-success:          var(--success);
+  --color-danger:           var(--danger);
+  --color-warning:          var(--warning);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ── Base styles ────────────────────────────────────────────────────────── */
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--on-surface);
+}
+
+/* Tabular numerals utility for amounts and balances */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

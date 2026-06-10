@@ -1,34 +1,38 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Inter, Space_Grotesk } from 'next/font/google';
+import { ThemeProvider } from 'next-themes';
+import './globals.css';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const spaceGrotesk = Space_Grotesk({
+  variable: '--font-space-grotesk',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "MuxPay Splitter — Atomic Batch Payout on Stellar",
+  title: 'MuxPay — Payroll on Stellar',
   description:
-    "Sign once with Freighter to pay up to 10 recipients atomically on Stellar testnet — supporting XLM direct payments, USDC via DEX path, and muxed accounts.",
+    'Noncustodial payroll on Stellar testnet — async claimable-balance distribution, one Freighter signature per run.',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-background text-on-surface">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
